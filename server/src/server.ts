@@ -1,19 +1,25 @@
-import express from "express";
+import express, {ErrorRequestHandler, Request, Response, NextFunction} from "express";
 import morgan from "morgan";
 import helmet from "helmet";
 import cookieParser from "cookie-parser";
-const app = express();
+import cors from "cors";
+import tweetRoute from "./router/tweets";
 
+const app = express();
+app.use(express.json());
 app.use(morgan("tiny"));
 app.use(helmet());
+app.use(cors());
 app.use(cookieParser());
 
+app.use("/tweets", tweetRoute);
 
 
-app.get("/", (req, res) => {
-  res.send("홈");
+app.use((error:ErrorRequestHandler,req: Request,res: Response,next: NextFunction) => {
+  res.status(404).json({message: "404 Not Found"});
 })
 
 
-
-app.listen(8000);
+app.listen(8000, () => {
+  console.log("서버 가동");
+});
