@@ -19,7 +19,7 @@ const validateCredential = [
     validate,
 ]
 
-const  vallidateSignup = [
+const  validateSignup = [
   ...validateCredential,
   body("name").notEmpty().withMessage("name is missing"),
   body("email").isEmail().normalizeEmail().withMessage("invaild email"),
@@ -31,9 +31,9 @@ const  vallidateSignup = [
 ]
 
 //POST /signup
-router.post("/signup", authController.signup);
+router.post("/signup", validateSignup, authController.signup);
 //POST /login
-router.post("/login", authController.login);
+router.post("/login", validateCredential,authController.login);
 
 router.get("/me", isAuth, authController.me);
 

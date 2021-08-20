@@ -1,24 +1,27 @@
+import * as userRepository from "./auth";
+
 let tweets = [
   {
     id: "1",
     text: "얍ㅑ얍ㅑ",
-    createAt: Date.now().toString(),
-    name: "Duddlf",
-    username: "duddlf",
-    url: "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png"
+    createAt: new Date().toString(),
+    userId: "1",
   },
   {
     id: "2",
     text: "끼엿",
-    createAt: Date.now().toString(),
-    name: "Ellie",
-    username: "ellie",
-    url: "https://widgetwhats.com/app/uploads/2019/11/free-profile-photo-whatsapp-1.png"
+    createAt: new Date().toString(),
+    userId:"1"
   }
 ]
 
 export async function getAll() {
-  return tweets;
+  return Promise.all(
+    tweets.map( async (tweet) => {
+      const { username, name, url } = await userRepository.findById(tweet.userId);
+      return { ...tweet, username, name, url};
+    })
+  )
 }
 
 export async function getAllByUsername(username: string){

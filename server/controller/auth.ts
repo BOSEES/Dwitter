@@ -4,7 +4,6 @@ import bcrypt from "bcrypt";
 import "express-async-errors";
 import * as userRepository from "../data/auth";
 
-
 const jwtSecretKey:string = "asd123";
 const jwtExpiresInDays:string = "2d";
 const bcryptSaltRounds: number = 12;

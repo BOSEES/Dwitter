@@ -22,7 +22,7 @@ export async function findByUsername(username: string) {
   return users.find((user) => user.username === username);
 }
 
-export async function findById(id?: string) {
+export async function findById(id?: string): Promise<any>{
   return users.find((user) => user.id === id)
 }
 
