@@ -1,8 +1,9 @@
-import {Request, Response,} from "express"
+import {Request, Response, NextFunction} from "express"
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import "express-async-errors";
 import * as userRepository from "../data/auth";
+
 
 const jwtSecretKey:string = "asd123";
 const jwtExpiresInDays:string = "2d";
@@ -47,6 +48,14 @@ export async function login(req: Request, res: Response) {
   }
   const token = createJwtToken(user.id);
   res.status(200).json({ token, username})
+}
+
+export async function me(req: Request, res: Response, next: NextFunction) {
+  const user = await userRepository.findById(req.userId);
+  if(!user) {
+    return res.status(404).json({message: "user not found"});
+  }
+  return res.status(200).json({ token: req.token, username: user.username});
 }
 
 function createJwtToken(id?: string) {
