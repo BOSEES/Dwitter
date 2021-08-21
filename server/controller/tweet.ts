@@ -25,12 +25,16 @@ export async function createTweet (req: Request, res: Response, next:NextFunctio
 export async function updateTweet (req: Request, res: Response, next:NextFunction){
   const id = req.params.id;
   const text = req.body.text;
-  const tweet = await tweetRepository.update(id, text);
-  if (tweet) {
-    res.status(200).json({message: "success"})
-  } else {
-    res.status(404).json({message: `TweetID(${id}) is not found`});
+  const tweet = await tweetRepository.getById(id);
+  if (!tweet) {
+    return res.sendStatus(404);
   }
+  if(tweet.userId !== req.userId){
+    return res.sendStatus(403);
+  }
+
+  const updated = await tweetRepository.update(id, text);
+  res.status(200).json(updated)
 }
 
 export async function removeTweet (req: Request, res: Response, next:NextFunction){
