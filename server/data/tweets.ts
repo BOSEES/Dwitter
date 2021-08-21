@@ -15,6 +15,13 @@ let tweets = [
   }
 ]
 
+type Tweet = {
+  id: string;
+  text: string;
+  createAt: string;
+  userId: string
+}
+
 export async function getAll() {
   return Promise.all(
     tweets.map( async (tweet) => {
@@ -25,24 +32,29 @@ export async function getAll() {
 }
 
 export async function getAllByUsername(username: string){
-  return tweets.filter((tweet) => tweet.username === username);
+  return getAll().then((tweets)=> {
+    tweets.filter((tweets) => tweets.username === username);
+  })
 }
 
 export async function getById(id: string) {
-  return tweets.find((tweet) => tweet.id === id);
+  const found = tweets.find((tweet) => tweet.id === id);
+  if (!found) {
+    return null;
+  }
+  const { username, name, url } = await userRepository.findById(found.userId);
+  return { ...found, username, name, url };
 }
 
-export async function create(text: string ,name: string, username: string) {
-  const tweet = {
-    id: Date.now().toString()+"1",
-    text:text,
-    name: name,
-    username: username,
-    createAt: Date.now().toString(),
-    url: "임시"
+export async function create(text: string, userId: string) {
+  const tweet: Tweet = {
+    id: new Date().toString(),
+    text,
+    createAt: new Date().toString(),
+    userId,
   }
   tweets = [tweet, ...tweets];
-  return tweet
+  return getById(tweet.id);
 }
 
 export async function update(id: string, text: string) {
@@ -50,7 +62,7 @@ export async function update(id: string, text: string) {
   if(tweet) {
     tweet.text = text;
   }
-  return tweet;
+  return getById(tweet!.id);
 }
 
 export async function remove(id: string) {
